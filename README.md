@@ -196,28 +196,38 @@ It supports **rubric-level grading** and **automatic feedback publishing**.
 
 
 
-■ Flask Postgres-Based AI Autograder (No Redis)
-■ Overview
-This project provides a lightweight AI-powered autograder built with Flask and PostgreSQL.
-It queues grading jobs directly in the database (no Redis required) and uses a Gemini model
-to evaluate student submissions from GitHub links. The system then posts results back to Moodle.
-■ Project Structure
+# 📘 Flask Postgres-Based AI Autograder (No Redis)
+
+## 🚀 Overview
+This project provides a lightweight **AI-powered autograder** built with **Flask** and **PostgreSQL**.  
+It queues grading jobs directly in the database (no Redis required) and uses a **Gemini model** to evaluate student submissions from GitHub links.  
+The system then posts results back to **Moodle** via REST API.
+
+---
+
+## 🧩 Project Structure
+
 ```
 autograder/
-■
-■■■ app.py # Flask app — handles submissions and creates jobs
-■■■ worker.py # Background worker listening for new jobs
-■■■ tasks.py # Gemini grading + Moodle posting logic
-■■■ requirements.txt # Python dependencies
-■■■ .env # Environment variables (DB, API keys, etc.)
-■■■ README.pdf # You are here
+│
+├── app.py                # Flask app — handles submissions and creates jobs
+├── worker.py             # Background worker listening for new jobs
+├── tasks.py              # Gemini grading + Moodle posting logic
+├── requirements.txt      # Python dependencies
+├── .env                  # Environment variables (DB, API keys, etc.)
+└── README.md             # You are here
 ```
-■■ Setup Instructions
-### 1■■ Install dependencies
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1️⃣ Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
-### 2■■ Set environment variables in `.env`
+
+### 2️⃣ Set environment variables in `.env`
 Example:
 ```
 DATABASE_URL=postgresql://username:password@localhost:5432/student_grades
@@ -225,51 +235,73 @@ GEMINI_API_KEY=your_google_genai_key
 BASE_URL=https://yourmoodleurl/webservice/rest/server.php
 WEB_SERVICE_TOKEN=your_moodle_token
 ```
-### 3■■ Initialize PostgreSQL schema
+
+### 3️⃣ Initialize PostgreSQL schema
 ```sql
 CREATE TABLE grading_jobs (
-id SERIAL PRIMARY KEY,
-userid VARCHAR(100),
-question TEXT,
-github_link TEXT,
-rubric JSONB,
-status VARCHAR(50) DEFAULT 'queued',
-result JSONB,
-created_at TIMESTAMP DEFAULT NOW(),
-updated_at TIMESTAMP DEFAULT NOW()
+  id SERIAL PRIMARY KEY,
+  userid VARCHAR(100),
+  question TEXT,
+  github_link TEXT,
+  rubric JSONB,
+  status VARCHAR(50) DEFAULT 'queued',
+  result JSONB,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
 );
 ```
-### 4■■ Start the Flask app
+
+### 4️⃣ Start the Flask app
 ```bash
 python app.py
 ```
-### 5■■ Start the Worker
+
+### 5️⃣ Start the Worker
 ```bash
 python worker.py
 ```
-■ How It Works
+
+---
+
+## 🧠 How It Works
+
 1. A POST request is made to the Flask API with:
-- `userid`
-- `assignmentactivity` (question)
-- `onlinetext` (GitHub URL)
-- `rubric` (JSON)
+   - `userid`
+   - `assignmentactivity` (question)
+   - `onlinetext` (GitHub URL)
+   - `rubric` (JSON)
+
 2. The Flask app inserts a new job into the `grading_jobs` table.
+
 3. PostgreSQL triggers a `NOTIFY` event (`new_grading_job`), which the worker listens for.
+
 4. The worker:
-- Fetches the student code from the GitHub link.
-- Sends the code and rubric to the Gemini model for grading.
-- Parses the response safely, even if malformed.
-- Posts the results back to Moodle via API.
-- Updates the job status and result in the DB.
-■ Troubleshooting
-- **Error: "the JSON object must be str, not dict"**
-→ Fixed in this version with safe JSON parsing in `tasks.py`.
-- **Worker not responding?**
-→ Ensure PostgreSQL notifications are working (`LISTEN/NOTIFY` support).
-- **Moodle not updating grades?**
-→ Check your `BASE_URL` and `WEB_SERVICE_TOKEN`.
-■■■ Author
-Built by **Sbusiso Phakathi**
-For use in AI autograding, learnership automation, and academic integrations.
-■ License
+   - Fetches the student code from the GitHub link.
+   - Sends the code and rubric to the Gemini model for grading.
+   - Parses the response safely, even if malformed.
+   - Posts the results back to Moodle via API.
+   - Updates the job status and result in the DB.
+
+---
+
+## 🔍 Troubleshooting
+
+- **Error:** `the JSON object must be str, not dict`  
+  ✅ Fixed in this version with safe JSON parsing in `tasks.py`.
+
+- **Worker not responding?**  
+  Ensure PostgreSQL notifications are working (`LISTEN/NOTIFY` support).
+
+- **Moodle not updating grades?**  
+  Check your `BASE_URL` and `WEB_SERVICE_TOKEN`.
+
+---
+
+## 🧑‍💻 Author
+Built by **Sbusiso Phakathi**  
+For use in **AI autograding**, **learnership automation**, and **academic integrations**.
+
+---
+
+## 🧾 License
 MIT License — free for educational and commercial use.
