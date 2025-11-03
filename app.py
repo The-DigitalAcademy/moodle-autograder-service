@@ -224,6 +224,13 @@ def grade_code():
 
     print(final_url)
 
+
+    try:
+        response = requests.post(base_url, data=params)
+        moodle_response = response.json()
+    except Exception as e:
+        return jsonify({"error": f"Failed to send data to Moodle: {str(e)}"}), 500
+
     save_grade_to_db({
         "email": userid,
         "question": question,
@@ -239,7 +246,7 @@ def grade_code():
     #     "feedback": result.get("feedback", ""),
     #     "suggestions": result.get("suggestions", "")
     # })
-    return final_url
+    return moodle_response
 
 
 
@@ -248,4 +255,4 @@ def home():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5500, debug=True)
