@@ -45,13 +45,31 @@ API_KEY = "your_gemini_api_key"
 The API receives a POST request with JSON like this:
 ```json
 {
-  "email": "student@example.com",
-  "assignmentid": "1",
+  "onlinetextid": "30",
+  "submissionid": "1",
+  "onlinetext": "<p>https://github.com/The-DigitalAcademy/moodle-local-autograder-plugin</p>",
   "userid": "2",
-  "assignmentactivity": "Write a Python function to reverse a string.",
-  "onlinetext": "https://raw.githubusercontent.com/user/repo/main/script.py",
+  "status": "submitted",
+  "courseid": "2",
+  "assignmentid": "1",
+  "assignmentname": "Coding Project",
+  "assignmentintro": "<p>Project introduction</p>",
+  "assignmentactivity": "<p>project instructions: submit a link to your github repo</p>",
+  "assignmentgrade": "100",
   "assignmentrubric": {
-    "criteria": "rubric_text_here"
+    "name": "Rubric Name",
+    "description": "Rubric Description",
+    "criteria": [
+      {
+        "criterionid": "1",
+        "criterion": "documentation",
+        "levels": [
+          {"id": "1", "definition": "little to no documentation", "score": "0.00000"},
+          {"id": "2", "definition": "good documentation", "score": "25.00000"}
+        ]
+      },
+      // ... more criteria
+    ]
   }
 }
 ```
