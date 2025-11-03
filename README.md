@@ -200,7 +200,7 @@ It supports **rubric-level grading** and **automatic feedback publishing**.
 
 ## 🚀 Overview
 This project provides a lightweight **AI-powered autograder** built with **Flask** and **PostgreSQL**.  
-It queues grading jobs directly in the database (no Redis required) and uses a **Gemini model** to evaluate student submissions from GitHub links.  
+It queues grading jobs directly in the database and uses a **Gemini model** to evaluate student submissions from GitHub links.  
 The system then posts results back to **Moodle** via REST API.
 
 ---
@@ -330,10 +330,9 @@ The API receives a POST request with JSON like this:
 ---
 
 ## 🧑‍💻 Author
-Built by **Sbusiso Phakathi**  
+Built by **Shaper**  
 For use in **AI autograding**, **learnership automation**, and **academic integrations**.
 
 ---
 
-## 🧾 License
-MIT License — free for educational and commercial use.
+
