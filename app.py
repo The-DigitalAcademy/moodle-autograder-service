@@ -1,6 +1,4 @@
-import face_recognition
-import base64
-import numpy as np
+
 import io
 import psycopg2
 from PIL import Image
