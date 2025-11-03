@@ -1,4 +1,4 @@
-# LMS-Auto_Grader
+<!-- # LMS-Auto_Grader
 # 🤖 AI Autograder
 
 An AI-powered Flask backend that grades student code submissions using **Google Gemini 2.5 Flash** and syncs results to **PostgreSQL** and **Moodle**.
@@ -191,7 +191,7 @@ It supports **rubric-level grading** and **automatic feedback publishing**.
 - Use hashed passwords (bcrypt) for user storage.
 - Enable HTTPS and authentication for production environments.
 
----
+--- -->
 
 
 
@@ -264,6 +264,38 @@ python worker.py
 ---
 
 ## 🧠 How It Works
+
+The API receives a POST request with JSON like this:
+```json
+{
+  "onlinetextid": "30",
+  "submissionid": "1",
+  "onlinetext": "<p>https://github.com/The-DigitalAcademy/moodle-local-autograder-plugin</p>",
+  "userid": "2",
+  "status": "submitted",
+  "courseid": "2",
+  "assignmentid": "1",
+  "assignmentname": "Coding Project",
+  "assignmentintro": "<p>Project introduction</p>",
+  "assignmentactivity": "<p>project instructions: submit a link to your github repo</p>",
+  "assignmentgrade": "100",
+  "assignmentrubric": {
+    "name": "Rubric Name",
+    "description": "Rubric Description",
+    "criteria": [
+      {
+        "criterionid": "1",
+        "criterion": "documentation",
+        "levels": [
+          {"id": "1", "definition": "little to no documentation", "score": "0.00000"},
+          {"id": "2", "definition": "good documentation", "score": "25.00000"}
+        ]
+      },
+      // ... more criteria
+    ]
+  }
+}
+```
 
 1. A POST request is made to the Flask API with:
    - `userid`
