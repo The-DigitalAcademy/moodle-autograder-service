@@ -111,7 +111,15 @@ def send_to_moodle(job, evaluation_details):
         params[f"advancedgradingdata[rubric][criteria][{i}][fillings][{i}][remark]"] = f"Automatically graded: {criterion.get('definition','')}"
     
     try:
+        import urllib.parse
+
+        # Encode params for URL
+        encoded_params = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
+        final_url = f"{BASE_URL}?{encoded_params}"
+
+        print(final_url)
+
         response = requests.post(BASE_URL, data=params)
         return response.json()
     except Exception as e:
-        return {"error": str(e)}
+        return {"error": str(e) +  "*****" + final_url}
