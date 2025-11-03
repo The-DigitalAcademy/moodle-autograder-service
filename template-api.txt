@@ -1,0 +1,94 @@
+curl -X POST https://dms-api-d6fbfmhpd9erb3a2.southafricanorth-01.azurewebsites.net/grade \
+  -H "Content-Type: application/json" \
+  -d '{
+    "onlinetextid": "30",
+    "submissionid": "1",
+    "onlinetext": "https://raw.githubusercontent.com/Sbusiso-Phakathi/ytgi/refs/heads/main/rx.js",
+    "userid": "2",
+    "status": "submitted",
+    "courseid": "2",
+    "assignmentid": "1",
+    "assignmentname": "Coding Project",
+    "assignmentintro": "Project introduction",
+    "assignmentactivity": "Create a function that takes in two numbers, add them and return their sum",
+    "assignmentgrade": "100",
+    "assignmentrubric": {
+        "name": "Rubric Name",
+        "description": "Rubric Description",
+        "criteria": [
+            {
+                "criterionid": "1",
+                "criterion": "Correctness",
+                "levels": [
+                    {"id": "1", "definition": "little to no documentation", "score": 0},
+                    {"id": "2", "definition": "good documentation", "score": 25}
+                ]
+            },
+            {
+                "criterionid": "2",
+                "criterion": "Logic",
+                "levels": [
+                    {"id": "3", "definition": "partial functionality", "score": 15},
+                    {"id": "4", "definition": "fully functional", "score": 25}
+                ]
+            },
+               {
+                "criterionid": "3",
+                "criterion": "Style",
+                "levels": [
+                    {"id": "3", "definition": "partial functionality", "score": 15},
+                    {"id": "4", "definition": "fully functional", "score": 25}
+                ]
+            },
+               {
+                "criterionid": "4",
+                "criterion": "Naming",
+                "levels": [
+                    {"id": "3", "definition": "partial functionality", "score": 15},
+                    {"id": "4", "definition": "fully functional", "score": 25}
+                ]
+            },
+               {
+                "criterionid": "5",
+                "criterion": "Test Cases",
+                "levels": [
+                    {"id": "3", "definition": "partial functionality", "score": 15},
+                    {"id": "4", "definition": "fully functional", "score": 25}
+                ]
+            },
+               {
+                "criterionid": "6",
+                "criterion": "Error Handling",
+                "levels": [
+                    {"id": "3", "definition": "partial functionality", "score": 15},
+                    {"id": "4", "definition": "fully functional", "score": 25}
+                ]
+            },
+               {
+                "criterionid": "7",
+                "criterion": "Efficiency",
+                "levels": [
+                    {"id": "3", "definition": "partial functionality", "score": 15},
+                    {"id": "4", "definition": "fully functional", "score": 25}
+                ]
+            },
+                 {
+                "criterionid": "8",
+                "criterion": "Documentation/Docstring",
+                "levels": [
+                    {"id": "3", "definition": "partial functionality", "score": 15},
+                    {"id": "4", "definition": "fully functional", "score": 25}
+                ]
+            }
+        ]
+    }
+}'
+
+
+
+
+
+
+
+
+{{baseUrl}}/webservice/rest/server.php?wstoken=%7B%7BwebServiceToken%7D%7D&wsfunction=mod_assign_save_grade&moodlewsrestformat=json&assignmentid=1&userid=2&grade=50&attemptnumber=-1&addattempt=0&workflowstate=graded&applytoall=0&plugindata%5Bassignfeedbackcomments_editor%5D%5Btext%5D=https%3A%2F%2Fraw.githubusercontent.com%2FSbusiso-Phakathi%2Fytgi%2Frefs%2Fheads%2Fmain%2Frx.js&plugindata%5Bassignfeedbackcomments_editor%5D%5Bformat%5D=1&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B0%5D%5Bcriterionid%5D=1&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B0%5D%5Bfillings%5D%5B0%5D%5Bcriterionid%5D=1&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B0%5D%5Bfillings%5D%5B0%5D%5Blevelid%5D=0.0&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B0%5D%5Bfillings%5D%5B0%5D%5Bremark%5D=Automatically%20graded%3A%20The%20code%20contains%20little%20to%20no%20documentation%2C%20which%20is%20the%20focus%20of%20this%20criterion%20based%20on%20the%20rubric%27s%20levels.&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B1%5D%5Bcriterionid%5D=2&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B1%5D%5Bfillings%5D%5B1%5D%5Bcriterionid%5D=2&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B1%5D%5Bfillings%5D%5B1%5D%5Blevelid%5D=15.0&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B1%5D%5Bfillings%5D%5B1%5D%5Bremark%5D=Automatically%20graded%3A%20The%20function%27s%20logic%20implements%20division%20instead%20of%20the%20requested%20addition%2C%20resulting%20in%20a%20complete%20failure%20to%20meet%20the%20core%20requirement%20of%20the%20problem.%20While%20functional%20for%20division%2C%20it%27s%20completely%20non-functional%20for%20addition.&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B2%5D%5Bcriterionid%5D=3&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B2%5D%5Bfillings%5D%5B2%5D%5Bcriterionid%5D=3&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B2%5D%5Bfillings%5D%5B2%5D%5Blevelid%5D=25.0&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B2%5D%5Bfillings%5D%5B2%5D%5Bremark%5D=Automatically%20graded%3A%20The%20code%20exhibits%20good%20formatting%2C%20consistent%20indentation%2C%20and%20is%20generally%20clean%20and%20easy%20to%20read.&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B3%5D%5Bcriterionid%5D=4&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B3%5D%5Bfillings%5D%5B3%5D%5Bcriterionid%5D=4&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B3%5D%5Bfillings%5D%5B3%5D%5Blevelid%5D=15.0&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B3%5D%5Bfillings%5D%5B3%5D%5Bremark%5D=Automatically%20graded%3A%20The%20function%20is%20named%20%60divide%60%2C%20which%20is%20misleading%20and%20incorrect%20for%20the%20problem%27s%20requirement%20of%20an%20addition%20function.&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B4%5D%5Bcriterionid%5D=5&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B4%5D%5Bfillings%5D%5B4%5D%5Bcriterionid%5D=5&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B4%5D%5Bfillings%5D%5B4%5D%5Blevelid%5D=15.0&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B4%5D%5Bfillings%5D%5B4%5D%5Bremark%5D=Automatically%20graded%3A%20No%20explicit%20test%20cases%20were%20provided%20to%20verify%20the%20function%27s%20behavior%20across%20different%20scenarios.&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B5%5D%5Bcriterionid%5D=6&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B5%5D%5Bfillings%5D%5B5%5D%5Bcriterionid%5D=6&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B5%5D%5Bfillings%5D%5B5%5D%5Blevelid%5D=25.0&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B5%5D%5Bfillings%5D%5B5%5D%5Bremark%5D=Automatically%20graded%3A%20The%20function%20implements%20robust%20error%20handling%20for%20undefined%20inputs%2C%20non-numeric%20inputs%2C%20and%20division%20by%20zero%2C%20which%20is%20excellent%20for%20the%20division%20operation%20it%20performs.&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B6%5D%5Bcriterionid%5D=7&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B6%5D%5Bfillings%5D%5B6%5D%5Bcriterionid%5D=7&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B6%5D%5Bfillings%5D%5B6%5D%5Blevelid%5D=25.0&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B6%5D%5Bfillings%5D%5B6%5D%5Bremark%5D=Automatically%20graded%3A%20The%20operations%20performed%20%28type%20checks%2C%20arithmetic%29%20are%20direct%20and%20optimal%2C%20indicating%20good%20efficiency%20for%20the%20task%20it%20undertakes.&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B7%5D%5Bcriterionid%5D=8&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B7%5D%5Bfillings%5D%5B7%5D%5Bcriterionid%5D=8&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B7%5D%5Bfillings%5D%5B7%5D%5Blevelid%5D=15.0&advancedgradingdata%5Brubric%5D%5Bcriteria%5D%5B7%5D%5Bfillings%5D%5B7%5D%5Bremark%5D=Automatically%20graded%3A%20The%20code%20lacks%20a%20docstring%20or%20any%20inline%20comments%20to%20explain%20the%20function%27s%20purpose%2C%20arguments%2C%20or%20return%20value.
