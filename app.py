@@ -23,54 +23,15 @@ CORS(app, resources={r"/api/*": {"origins": "https://dms-api-d6fbfmhpd9erb3a2.so
 load_dotenv()
 
 MODEL = "gemini-2.5-flash"
-DATABASE_URL = getenv("DATABASE_URL")
-DATABASE_URL2 = getenv("DATABASE_URL2")
 API_KEY = getenv("GEMINI_API_KEY")
 
 
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
-Base = declarative_base()
 
-class Grade(Base):
-    __tablename__ = "grades"
-    id = Column(Integer, primary_key=True, index=True)
-    user_email = Column(String, index=True)
-    question = Column(Text)
-    llm_score = Column(Integer)
-    final_score = Column(Integer)
-    feedback = Column(Text)
-    suggestions = Column(Text)
-    timestamp = Column(DateTime(timezone=True), server_default=func.now())
-
-class User(Base):
-    __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    role = Column(String, default="learner")
-
-Base.metadata.create_all(bind=engine)
 
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel(MODEL)
 
 
-
-def save_grade_to_db(entry):
-    db = SessionLocal()
-    grade = Grade(
-        user_email=entry["email"],
-        question=entry["question"],
-        llm_score=entry["llm_score"],
-        final_score=entry["final_score"],
-        feedback=entry["feedback"],
-        suggestions=entry["suggestions"]
-    )
-    db.add(grade)
-    db.commit()
-    db.close()
 
 def grade_with_gemini(student_code, question, rubrictemplate):
     """Grade student's code using Gemini and fixed rubric."""
@@ -97,10 +58,7 @@ Respond **only** in this JSON format:
 
 
 {{
-    "score": 12,
-    "feedback": "Great effort on the introduction.",
-    "suggestions": "Review the citation style for the bibliography.",
-    "evaluation_details": [ // Assuming a container key like this
+  
        { {
             "criteria": "Correctness",
             "criterionid": 1,
@@ -126,7 +84,7 @@ Respond **only** in this JSON format:
             raw = raw[7:-3].strip()
         return json.loads(raw)
     except Exception as e:
-        return {"score": 0, "feedback": f"Error: {e}", "suggestions": "N/A"}
+        return {f"Error: {e}"}
 
 @app.route("/grade", methods=["POST"])
 def grade_code():
@@ -188,7 +146,6 @@ def grade_code():
     rubrictemplate = data.get("assignmentrubric").get("criteria")
 
     result = grade_with_gemini(student_code, question, rubrictemplate)
-    final_score = result.get("score", 0)
 
     # Base URL and params
     base_url = "{{baseUrl}}/webservice/rest/server.php"
@@ -222,8 +179,6 @@ def grade_code():
     encoded_params = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
     final_url = f"{base_url}?{encoded_params}"
 
-    print(final_url)
-
 
     try:
         response = requests.post(base_url, data=params)
@@ -231,21 +186,7 @@ def grade_code():
     except Exception as e:
         return jsonify({"error": f"Failed to send data to Moodle: {str(e)}"}), 500
 
-    save_grade_to_db({
-        "email": userid,
-        "question": question,
-        "llm_score": final_score,
-        "final_score": final_score,
-        "feedback": result.get("feedback", ""),
-        "suggestions": result.get("suggestions", "")
-    })
 
-
-    # return jsonify({
-    #     "score": final_score,
-    #     "feedback": result.get("feedback", ""),
-    #     "suggestions": result.get("suggestions", "")
-    # })
     return moodle_response
 
 
@@ -255,4 +196,4 @@ def home():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5500, debug=True)
+    app.run(host='0.0.0.0', port=5510, debug=True)
