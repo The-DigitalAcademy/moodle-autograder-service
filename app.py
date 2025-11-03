@@ -177,14 +177,14 @@ def grade_code():
     final_url = f"{base_url}?{encoded_params}"
 
 
-    # try:
-    #     response = requests.post(base_url, data=params)
-    #     moodle_response = response.json()
-    # except Exception as e:
-    #     return jsonify({"error": f"Failed to send data to Moodle: {str(e)}"}), 500
+    try:
+        response = requests.post(base_url, data=params)
+        moodle_response = response.json()
+    except Exception as e:
+        return jsonify({"error": f"Failed to send data to Moodle: {str(e)}"}), 500
 
 
-    return result
+    return moodle_response
 
 
 
