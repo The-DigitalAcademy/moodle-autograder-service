@@ -1,16 +1,12 @@
 
-import io
-import psycopg2
-from PIL import Image
+
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from datetime import datetime
 from os import getenv
 from dotenv import load_dotenv
 
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, func
-from sqlalchemy.orm import sessionmaker, declarative_base
-import bcrypt
+
 import google.generativeai as genai
 import json
 import requests
@@ -57,19 +53,20 @@ Format your response like this:
 Respond **only** in this JSON format:
 
 
-{{
+{{    
+    "evaluation_details": [ 
   
        { {
             "criteria": "Correctness",
             "criterionid": 1,
-            "definition": "Ease of reading and understanding.",
+            "definition": "Good Documentation",
             "levels": 4.5
         }},
         {{
             "criteria": "Logic",
             "criterionid": 2,
-            "definition": "Thoroughness of topic coverage.",
-            "levels": 3.0
+            "definition": "No logic at all",
+            "levels": 0.0
         }}
     ]
 }}
@@ -180,14 +177,14 @@ def grade_code():
     final_url = f"{base_url}?{encoded_params}"
 
 
-    try:
-        response = requests.post(base_url, data=params)
-        moodle_response = response.json()
-    except Exception as e:
-        return jsonify({"error": f"Failed to send data to Moodle: {str(e)}"}), 500
+    # try:
+    #     response = requests.post(base_url, data=params)
+    #     moodle_response = response.json()
+    # except Exception as e:
+    #     return jsonify({"error": f"Failed to send data to Moodle: {str(e)}"}), 500
 
 
-    return moodle_response
+    return result
 
 
 
