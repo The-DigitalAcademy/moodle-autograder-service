@@ -87,15 +87,92 @@ google-generativeai==0.6.0
 **Submit a Grading Job (POST /grade)**
 Send a JSON payload:
 ```json
-{
-  "userid": "5",
-  "assignmentactivity": "Write a Python function that adds two numbers.",
-  "onlinetext": "https://raw.githubusercontent.com/user/repo/main/addition.py",
-  "assignmentrubric": { "criteria": "Clarity, Correctness, Style" },
-  "assignmentid": "1",
-  "assignmentname": "Addition Function",
-  "assignmentintro": "Implement a function to add two numbers."
-}
+curl -X POST localhost:5550/grade \
+  -H "Content-Type: application/json" \
+  -d '{
+    "onlinetextid": "30",
+    "submissionid": "1",
+    "onlinetext": "https://raw.githubusercontent.com/Sbusiso-Phakathi/ytgi/refs/heads/main/rx.js",
+    "userid": "2",
+    "status": "submitted",
+    "courseid": "2",
+    "assignmentid": "1",
+    "assignmentname": "Coding Project",
+    "assignmentintro": "Project introduction",
+    "assignmentactivity": "Create a function that takes in two numbers, add them and return their sum",
+    "assignmentgrade": "100",
+    "assignmentrubric": {
+        "name": "Rubric Name",
+        "description": "Rubric Description",
+        "criteria": [
+            {
+                "criterionid": "1",
+                "criterion": "Correctness",
+                "levels": [
+                    {"id": "1", "definition": "little to no documentation", "score": 0},
+                    {"id": "2", "definition": "good documentation", "score": 25}
+                ]
+            },
+            {
+                "criterionid": "2",
+                "criterion": "Logic",
+                "levels": [
+                    {"id": "1", "definition": "partial functionality", "score": 15},
+                    {"id": "2", "definition": "fully functional", "score": 25}
+                ]
+            },
+               {
+                "criterionid": "3",
+                "criterion": "Style",
+                "levels": [
+                    {"id": "1", "definition": "partial functionality", "score": 15},
+                    {"id": "2", "definition": "fully functional", "score": 25}
+                ]
+            },
+               {
+                "criterionid": "4",
+                "criterion": "Naming",
+                "levels": [
+                    {"id": "1", "definition": "partial functionality", "score": 15},
+                    {"id": "2", "definition": "fully functional", "score": 25}
+                ]
+            },
+               {
+                "criterionid": "5",
+                "criterion": "Test Cases",
+                "levels": [
+                    {"id": "1", "definition": "partial functionality", "score": 15},
+                    {"id": "2", "definition": "fully functional", "score": 25}
+                ]
+            },
+               {
+                "criterionid": "6",
+                "criterion": "Error Handling",
+                "levels": [
+                    {"id": "1", "definition": "partial functionality", "score": 15},
+                    {"id": "2", "definition": "fully functional", "score": 25}
+                ]
+            },
+               {
+                "criterionid": "7",
+                "criterion": "Efficiency",
+                "levels": [
+                    {"id": "1", "definition": "partial functionality", "score": 15},
+                    {"id": "2", "definition": "fully functional", "score": 25}
+                ]
+            },
+                 {
+                "criterionid": "8",
+                "criterion": "Documentation/Docstring",
+                "levels": [
+                    {"id": "1", "definition": "little to no documentation", "score": 0},
+                    {"id": "2", "definition": "partial functionality", "score": 15},
+                    {"id": "3", "definition": "fully functional", "score": 25}
+                ]
+            }
+        ]
+    }
+}'
 ```
 **Example Response:**
 ```json
