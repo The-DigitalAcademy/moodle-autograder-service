@@ -70,3 +70,45 @@ while True:
         job_id = int(notify.payload)
         print(f"New job received: {job_id}")
         process_job(job_id)
+# ... (existing imports and setup)
+
+# # Define a simple retry logic
+# RETRY_DELAY_SECONDS = 300 # Retry failed jobs older than 5 minutes
+
+# while True:
+#     # 1. Listen for new jobs (immediate priority)
+#     if select.select([conn], [], [], 5) == ([], [], []):
+#         pass # No new notification, proceed to sweep
+#     else:
+#         conn.poll()
+#         while conn.notifies:
+#             notify = conn.notifies.pop(0)
+#             job_id = int(notify.payload)
+#             print(f"New job received from NOTIFY: {job_id}")
+#             process_job(job_id)
+            
+#     # 2. Add a periodic sweep for old/failed jobs (The Scheduler part)
+#     # This prevents the worker from blocking indefinitely on select.select if no NOTIFYs come.
+#     print("Sweeping for old or failed jobs...")
+    
+#     with engine.begin() as db_conn:
+#         # Find jobs that failed a while ago, or are stuck in 'queued' without a NOTIFY
+#         # You'll need an 'updated_at' column in your 'grading_jobs' table for this.
+#         sweep_query = text("""
+#             SELECT id FROM grading_jobs
+#             WHERE (status = 'failed' AND updated_at < NOW() - INTERVAL '5 minutes')
+#                OR (status = 'queued' AND updated_at < NOW() - INTERVAL '30 seconds')
+#             ORDER BY updated_at ASC
+#             LIMIT 10;
+#         """)
+        
+#         jobs_to_retry = db_conn.execute(sweep_query).fetchall()
+
+#     for job in jobs_to_retry:
+#         job_id = job[0]
+#         print(f"Retrying/Sweeping job: {job_id}")
+#         process_job(job_id)
+        
+#     # 3. Add a short pause to prevent thrashing the DB during the sweep
+#     import time
+#     time.sleep(10)
