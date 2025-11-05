@@ -1,4 +1,4 @@
-curl -X POST https://dms-api-d6fbfmhpd9erb3a2.southafricanorth-01.azurewebsites.net/grade \
+curl -X POST localhost:5550/grade \
   -H "Content-Type: application/json" \
   -d '{
     "onlinetextid": "30",

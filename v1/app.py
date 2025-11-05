@@ -2,8 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
-import json, os, threading, logging
-from worker import listen_for_jobs
+import json, os
 
 load_dotenv()
 
@@ -13,10 +12,6 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-)
 
 @app.route("/grade", methods=["POST"])
 def grade_code():
@@ -27,6 +22,7 @@ def grade_code():
     assignmentid = data.get("assignmentid")
     assignmentname = data.get("assignmentname")
     assignmentintro = data.get("assignmentintro")
+    rubric_key = data.get("rubric_key", "simple_addition")
     rubric = data.get("assignmentrubric")
 
     if not github_link or not userid or not question:
@@ -51,7 +47,6 @@ def grade_code():
         )
         job_id = result.fetchone()[0]
 
-    logging.info(f"📩 Job {job_id} queued by user {userid}")
     return jsonify({"status": "queued", "job_id": job_id})
 
 
@@ -74,16 +69,10 @@ def home():
     return render_template('index.html')
 
 
-def start_worker():
-    """Start the background worker in a daemon thread."""
-    logging.info("🧵 Starting background worker thread...")
-    worker_thread = threading.Thread(target=listen_for_jobs, daemon=True)
-    worker_thread.start()
+@app.route('/static/<path:path>')
+def send_static(path):
+    return app.send_static_file(path)
 
 
-if __name__ == "__main__":
-    # Prevent double-threading when using Flask's debug reloader
-    if os.environ.get("WERKZEUG_RUN_MAIN") == "true" or not app.debug:
-        start_worker()
-
-    app.run(host='0.0.0.0', port=5550, debug=False)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5546, debug=True)

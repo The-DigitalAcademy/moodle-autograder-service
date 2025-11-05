@@ -1,0 +1,1 @@
+delete from grading_jobs 

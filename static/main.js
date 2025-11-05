@@ -1,53 +1,55 @@
-const form = document.getElementById("jobForm");
-const jobsDiv = document.getElementById("jobs");
+const form = document.getElementById('jobForm');
+const jobsDiv = document.getElementById('jobs');
 let jobs = [];
 
-form.addEventListener("submit", async (e) => {
+form.addEventListener('submit', async (e) => {
     e.preventDefault();
-
-    const jobData = {
-        userid: document.getElementById("userid").value,
-        assignmentid: document.getElementById("assignmentid").value,
-        github_link: document.getElementById("github_link").value,
-        assignmentname: document.getElementById("assignmentname").value,
-        assignmentactivity: document.getElementById("assignmentactivity").value,
-        assignmentintro: document.getElementById("assignmentintro").value,
-        rubric_key: document.getElementById("rubric_key").value
+    const payload = {
+        userid: document.getElementById('userid').value,
+        assignmentid: document.getElementById('assignmentid').value,
+        github_link: document.getElementById('github_link').value,
+        assignmentname: document.getElementById('assignmentname').value,
+        assignmentactivity: document.getElementById('assignmentactivity').value,
+        assignmentrubric: (() => {
+            try { return JSON.parse(document.getElementById('rubric').value || '{}'); } catch(e) { return {}; }
+        })()
     };
-
-    const res = await fetch("/grade", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(jobData)
+    const res = await fetch('/grade', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
     });
-
     const data = await res.json();
-    if(data.job_id){
-        jobs.push({job_id: data.job_id, status: "queued"});
-        renderJobs();
+    if(data.job_id) {
+        jobs.unshift({job_id: data.job_id, status: 'queued'});
+        render();
+    } else if (data.error) {
+        alert('Error: ' + data.error);
     }
 });
 
-setInterval(async () => {
-    for(let job of jobs){
-        const res = await fetch(`/grade_status/${job.job_id}`);
-        const data = await res.json();
-        job.status = data.status;
-        job.result = data.result;
+async function refreshStatuses() {
+    for (let j of jobs.slice(0,10)) {
+        const res = await fetch(`/grade_status/${j.job_id}`);
+        if (res.ok) {
+            const d = await res.json();
+            j.status = d.status;
+            j.result = d.result;
+        }
     }
-    renderJobs();
-}, 3000);
-
-function renderJobs(){
-    jobsDiv.innerHTML = "";
-    jobs.forEach(job => {
-        const div = document.createElement("div");
-        div.className = "job";
-        div.innerHTML = `
-            <p>Job ID: ${job.job_id}</p>
-            <p class="status">Status: ${job.status}</p>
-            <pre>${job.result ? JSON.stringify(job.result, null, 2) : ""}</pre>
-        `;
-        jobsDiv.appendChild(div);
-    });
+    render();
 }
+
+function render() {
+    jobsDiv.innerHTML = '';
+    for (let j of jobs) {
+        const div = document.createElement('div');
+        div.style.background = '#fff';
+        div.style.padding = '10px';
+        div.style.marginBottom = '8px';
+        div.innerHTML = `<strong>Job ${j.job_id}</strong><div>Status: ${j.status}</div><pre>${j.result ? JSON.stringify(j.result, null, 2) : ''}</pre>`;
+        jobsDiv.appendChild(div);
+    }
+}
+
+setInterval(refreshStatuses, 3000);
