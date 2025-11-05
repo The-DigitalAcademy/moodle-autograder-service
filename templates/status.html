@@ -1,0 +1,411 @@
+<!-- <!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grading Job Results</title>
+    <style>
+        /* --- General and Container Styling --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f9;
+            padding: 20px;
+        }
+        .full-result-container {
+            width: 98%; /* Wider to fit all columns */
+            max-width: 1600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            overflow-x: auto; 
+        }
+        h1 {
+            background-color: #4a90e2; 
+            color: white;
+            padding: 15px 20px;
+            margin: 0;
+            font-size: 1.6em;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        /* --- Table Structure and Look --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #333;
+        }
+        th, td {
+            padding: 8px 12px; /* Reduced padding for more columns */
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.85em; 
+            max-width: 180px; /* Limit width for all content cells */
+            min-width: 60px;
+        }
+        th {
+            background-color: #f0f8ff; 
+            font-weight: 700;
+            color: #333;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e6f7ff;
+            cursor: pointer;
+        }
+
+        /* --- Specific Cell Styling --- */
+        /* For ID and short identifiers */
+        .key-id, .short-text {
+            white-space: nowrap; /* Keep short IDs on one line */
+        }
+        .key-id {
+            font-weight: 700;
+            color: #4a90e2;
+        }
+        /* For long text fields like question and link */
+        .long-text {
+            white-space: normal; /* Allows text to wrap */
+            word-wrap: break-word; /* Ensures wrapping for long URLs */
+            max-height: 50px; /* Optional: limit cell height */
+            overflow: hidden; /* Optional: hide overflow */
+        }
+        /* For JSON and Timestamps */
+        .json-data, .timestamp-data {
+            font-family: monospace;
+            font-size: 0.8em;
+            color: #555;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        
+        /* --- Status Badges --- */
+        .status-cell span {
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .status-done span { color: #155724; background-color: #d4edda; }
+        .status-failed span { color: #721c24; background-color: #f8d7da; }
+        .status-queued span, .status-inprogress span { color: #856404; background-color: #fff3cd; }
+
+        /* --- Empty State --- */
+        .empty-state {
+            padding: 50px;
+            text-align: center;
+            font-size: 1.2em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+
+<div class="full-result-container">
+    <h1>Grading Job Submission History</h1>
+
+    {% if results %}
+    <table>
+        <thead>
+            <tr>
+                {# Automatically generate TH for every column in the result set #}
+                {% for key in results[0].keys() %}
+                    <th>{{ key.replace('_', ' ').title() }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in results %}
+                <tr>
+                    {% for key, value in row.items() %}
+                        
+                        {# 1. Set default content and class #}
+                        {% set cell_content = value %}
+                        {% set cell_class = 'long-text' %}
+
+                        {% if value == None %}
+                            {% set cell_content = 'null' %}
+                            {% set cell_class = 'json-data' %}
+                        {% elif key == 'id' %}
+                            {% set cell_class = 'key-id short-text' %}
+                        {% elif key in ['userid', 'assignmentid', 'assignmentname'] %}
+                            {% set cell_class = 'short-text' %}
+                        {% elif key in ['created_at', 'updated_at'] %}
+                            {% set cell_class = 'timestamp-data' %}
+                        {% elif key in ['result', 'rubric'] %}
+                            {# Format JSONB data and shorten if necessary #}
+                            {% if value is mapping %}
+                                {% set cell_content = value | tojson %}
+                            {% endif %}
+                            {% set cell_class = 'json-data' %}
+                            {% if cell_content | length > 100 %}
+                                {% set cell_content = cell_content[:100] ~ '...' %}
+                            {% endif %}
+                        {% endif %}
+
+                        <td class="{{ cell_class }}">
+                            {% if key == 'status' %}
+                                {# 2. Status Badge Generation #}
+                                {% set status_lower = value | lower %}
+                                {% set status_class = '' %}
+                                {% if 'done' in status_lower %}
+                                    {% set status_class = 'status-done' %}
+                                {% elif 'failed' in status_lower %}
+                                    {% set status_class = 'status-failed' %}
+                                {% else %}
+                                    {% set status_class = 'status-queued' %}
+                                {% endif %}
+                                <div class="{{ status_class }}"><span>{{ value.upper() }}</span></div>
+                            {% else %}
+                                {# 3. Standard Content Output #}
+                                {{ cell_content }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <div class="empty-state">
+            <p>No grading job results available to display.</p>
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grading Job Results</title>
+<style>
+/* --- General and Container Styling --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f9;
+    padding: 20px;
+}
+.full-result-container {
+    width: 98%;
+    max-width: 1600px;
+    margin: 40px auto;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow-x: auto;
+}
+h1 {
+    background-color: #4a90e2;
+    color: white;
+    padding: 15px 20px;
+    margin: 0;
+    font-size: 1.6em;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+/* --- Filter Control Styling --- */
+.filter-controls {
+    padding: 15px 20px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.filter-controls label {
+    font-weight: 600;
+    color: #4a90e2;
+}
+.filter-controls select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+    min-width: 150px;
+}
+.filter-controls select:focus {
+    border-color: #4a90e2;
+    outline: none;
+}
+
+/* --- Table Structure and Look --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #333;
+}
+th, td {
+    padding: 8px 12px; 
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.85em; 
+    max-width: 180px; 
+    min-width: 60px;
+}
+th {
+    background-color: #f0f8ff; 
+    font-weight: 700;
+    color: #333;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+tr:hover {
+    background-color: #e6f7ff;
+    cursor: pointer;
+}
+
+/* --- Specific Cell Styling --- */
+.key-id, .short-text {
+    white-space: nowrap;
+}
+.key-id {
+    font-weight: 700;
+    color: #4a90e2;
+}
+.long-text {
+    white-space: normal;
+    word-wrap: break-word;
+    max-height: 50px;
+    overflow: hidden;
+}
+.json-data, .timestamp-data {
+    font-family: monospace;
+    font-size: 0.8em;
+    color: #555;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+/* --- Status Badges --- */
+.status-cell {
+    white-space: nowrap;
+}
+.status-cell span {
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+.status-done span { color: #155724; background-color: #d4edda; }
+.status-failed span { color: #721c24; background-color: #f8d7da; }
+.status-queued span, .status-inprogress span { color: #856404; background-color: #fff3cd; }
+
+/* --- Empty State --- */
+.empty-state {
+    padding: 50px;
+    text-align: center;
+    font-size: 1.2em;
+    color: #6c757d;
+}
+</style>
+</head>
+<body>
+
+<div class="full-result-container">
+<h1>Grading Job Submission History</h1>
+
+{% if results %}
+    <div class="filter-controls">
+        <label for="status-filter">Filter by Status:</label>
+        <select id="status-filter" onchange="filterTable()">
+            <option value="all">All Statuses</option>
+            <option value="done">DONE</option>
+            <option value="failed">FAILED</option>
+            <option value="queued">QUEUED</option>
+            <option value="in_progress">IN_PROGRESS</option>
+        </select>
+    </div>
+
+    <table id="results-table">
+        <thead>
+            <tr>
+                {% for key in results[0].keys() %}
+                    <th data-column-key="{{ key }}">{{ key.replace('_', ' ').title() }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in results %}
+                <tr data-status="{{ row.status | lower }}">
+                    {% for key, value in row.items() %}
+                        {% set cell_content = value %}
+                        {% set cell_class = 'long-text' %}
+                        {% if value == None %}
+                            {% set cell_content = 'null' %}
+                            {% set cell_class = 'json-data' %}
+                        {% elif key == 'id' %}
+                            {% set cell_class = 'key-id short-text' %}
+                        {% elif key in ['userid', 'assignmentid', 'assignmentname'] %}
+                            {% set cell_class = 'short-text' %}
+                        {% elif key in ['created_at', 'updated_at'] %}
+                            {% set cell_class = 'timestamp-data' %}
+                        {% elif key in ['result', 'rubric'] %}
+                            {% if value is mapping %}
+                                {% set cell_content = value | tojson %}
+                            {% endif %}
+                            {% set cell_class = 'json-data' %}
+                            {% if cell_content | length > 100 %}
+                                {% set cell_content = cell_content[:100] ~ '...' %}
+                            {% endif %}
+                        {% endif %}
+
+                        <td class="{% if key == 'status' %}status-cell{% endif %} {{ cell_class }}">
+                            {% if key == 'status' %}
+                                {% set status_lower = value | lower %}
+                                {% set status_class = '' %}
+                                {% if 'done' in status_lower %}
+                                    {% set status_class = 'status-done' %}
+                                {% elif 'failed' in status_lower %}
+                                    {% set status_class = 'status-failed' %}
+                                {% else %}
+                                    {% set status_class = 'status-queued' %}
+                                {% endif %}
+                                <div class="{{ status_class }}"><span>{{ value.upper() }}</span></div>
+                            {% else %}
+                                {{ cell_content }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="empty-state">
+        <p>No grading job results available to display.</p>
+    </div>
+{% endif %}
+
+</div>
+
+<script>
+function filterTable() {
+    const filter = document.getElementById('status-filter').value.toLowerCase();
+    const table = document.getElementById('results-table');
+    const rows = table.tBodies[0].querySelectorAll('tr');
+
+    rows.forEach(row => {
+        const rowStatus = row.getAttribute('data-status');
+        if (filter === 'all' || rowStatus === filter) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+window.onload = filterTable;
+</script>
+
+</body>
+</html>

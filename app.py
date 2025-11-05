@@ -68,6 +68,18 @@ def grade_status(job_id):
 
         return jsonify({"status": job.status, "result": job.result})
 
+@app.route("/grade_status2")
+def grade_status2():
+    with engine.begin() as conn:
+        job = conn.execute(
+            text("SELECT * FROM grading_jobs"),
+        ).fetchall()
+
+        if not job:
+            return jsonify({"error": "Job not found"}), 404
+
+        return render_template('status.html', results=job)
+
 
 @app.route('/index')
 def home():
