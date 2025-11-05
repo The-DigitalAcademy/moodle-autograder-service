@@ -155,7 +155,4 @@ SELECT * FROM grading_jobs;
 
 ---
 
-## 📜 License
-
-This project is licensed under the MIT License.
 
