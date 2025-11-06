@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 import json, os, threading, logging
 from worker import listen_for_jobs
+import re
 
 load_dotenv()
 
@@ -21,16 +22,23 @@ logging.basicConfig(
 @app.route("/grade", methods=["POST"])
 def grade_code():
     data = request.json
-    github_link = data.get("onlinetext")
     userid = data.get("userid")
     question = data.get("assignmentactivity")
     assignmentid = data.get("assignmentid")
     assignmentname = data.get("assignmentname")
-    assignmentintro = data.get("assignmentintro")
     rubric = data.get("assignmentrubric")
 
+    def strip_html(text):
+        if text:
+            return re.sub('<[^<]+?>', '', text)
+        return ""
+
+    github_link = strip_html(data.get("onlinetext"))
+    assignmentintro = strip_html(data.get("assignmentintro"))
+
+
     if not github_link or not userid or not question:
-        return jsonify({"error": "Missing fields"}), 400
+            return jsonify({"error": "Missing fields"}), 400
 
     with engine.begin() as conn:
         result = conn.execute(
@@ -55,21 +63,9 @@ def grade_code():
     return jsonify({"status": "queued", "job_id": job_id})
 
 
-@app.route("/grade_status/<int:job_id>")
-def grade_status(job_id):
-    with engine.begin() as conn:
-        job = conn.execute(
-            text("SELECT status, result FROM grading_jobs WHERE id=:id"),
-            {"id": job_id}
-        ).fetchone()
 
-        if not job:
-            return jsonify({"error": "Job not found"}), 404
-
-        return jsonify({"status": job.status, "result": job.result})
-
-@app.route("/grade_status2")
-def grade_status2():
+@app.route("/grade_status")
+def grade_status():
     with engine.begin() as conn:
         job = conn.execute(
             text("SELECT * FROM grading_jobs"),
