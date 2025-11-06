@@ -23,7 +23,6 @@ logging.basicConfig(
 def grade_code():
     data = request.json
     userid = data.get("userid")
-    question = data.get("assignmentactivity")
     assignmentid = data.get("assignmentid")
     assignmentname = data.get("assignmentname")
     rubric = data.get("assignmentrubric")
@@ -35,6 +34,8 @@ def grade_code():
 
     github_link = strip_html(data.get("onlinetext"))
     assignmentintro = strip_html(data.get("assignmentintro"))
+    question = strip_html(data.get("assignmentactivity"))
+
 
 
     if not github_link or not userid or not question:
