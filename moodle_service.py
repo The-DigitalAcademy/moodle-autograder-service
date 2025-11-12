@@ -1,4 +1,8 @@
 import os, requests
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Load Moodle API credentials from environment variables.
 MOODLE_API_URL = os.getenv('MOODLE_API_URL')
