@@ -1,0 +1,117 @@
+# ---------------------------
+# Python and Environment
+# ---------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+.eggs/
+*.manifest
+*.spec
+
+# Virtual environment folders
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+
+# Jupyter notebooks (optional)
+.ipynb_checkpoints/
+
+# Byte-compiled / optimized files
+*.pyc
+
+# ---------------------------
+# OS and Editor files
+# ---------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+*.bak
+*.tmp
+*~
+
+# ---------------------------
+# Logs and Debug
+# ---------------------------
+*.log
+logs/
+debug.log
+
+# ---------------------------
+# Environment / Secrets
+# ---------------------------
+.env*
+.env.local
+.env.*.local
+.envrc
+*.pem
+*.key
+
+# ---------------------------
+# Project output / data
+# ---------------------------
+output/
+data/
+uploads/
+tmp/
+cache/
+
+# ---------------------------
+# Build artifacts
+# ---------------------------
+dist/
+build/
+site/
+*.egg-info/
+__pycache__/
+pip-wheel-metadata/
+*.dist-info/
+
+# ---------------------------
+# Test and Coverage
+# ---------------------------
+.coverage
+.tox/
+.nox/
+htmlcov/
+.cache/
+pytest_cache/
+.coverage.*
+*.cover
+coverage.xml
+*.py,cover
+
+# ---------------------------
+# System / Deployment
+# ---------------------------
+*.pid
+*.seed
+*.pid.lock
+
+# Docker
+docker-compose.override.yml
+*.tar
+*.img
+*.bak
+
+# ---------------------------
+# IDE-specific files
+# ---------------------------
+.vscode/
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# ---------------------------
+# Miscellaneous
+# ---------------------------
+__MACOSX/
