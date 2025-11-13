@@ -1,4 +1,4 @@
-import os, sys, json, pika, bleach
+import os, sys, json, pika, bleach, logging
 from dotenv import load_dotenv
 from moodle_service import MoodleService
 from github_repository import GitHubRepository
@@ -13,7 +13,29 @@ MQ_HOST = os.getenv("MQ_HOST")
 QUEUE = os.getenv("QUEUE")
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 
+# ---------------------------------------------------------
+# Logging Configuration
+# ---------------------------------------------------------
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+LOG_FILE = os.getenv("LOG_FILE", "autograder.log")
 
+logging.basicConfig(
+    level=LOG_LEVEL,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_FILE),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+
+logger = logging.getLogger(__name__)
+
+# Only show WARNING and ERROR from Pika
+logging.getLogger("pika").setLevel(logging.WARNING)
+
+# ---------------------------------------------------------
+# Main Application Logic
+# ---------------------------------------------------------
 def main() -> None:
     """
     Connects to RabbitMQ and continuously listens for new assignment submissions.
@@ -24,16 +46,18 @@ def main() -> None:
     - Running an LLM-based code review using the provided rubric.
     - Sending structured grading feedback back to Moodle.
     """
+    try:
+        # Connect to RabbitMQ
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host=MQ_HOST))
+        channel = connection.channel()
 
-    # Connect to RabbitMQ
-    connection = pika.BlockingConnection( pika.ConnectionParameters(host=MQ_HOST))
-    channel = connection.channel()
+        # Ensure the target queue exists
+        channel.queue_declare(queue=QUEUE, durable=True)
+        logger.info(f"✅ Connected to RabbitMQ at %s, listening on queue: %s", MQ_HOST, QUEUE)
+    except Exception as e:
+        logger.exception(f"Failed to connect to RabbitMQ: {e}")
+        sys.exit(1)
 
-    # Ensure the target queue exists
-    channel.queue_declare(queue=QUEUE, durable=True)
-    print(f"✅ Connected to RabbitMQ at {MQ_HOST}, listening on queue: {QUEUE}")
-
-    # Define the message callback handler
     def callback(channel, method, properties, body):
         """
         Callback function executed whenever a message (submission) arrives in the queue.
@@ -45,7 +69,7 @@ def main() -> None:
             body (bytes): The JSON-encoded submission data.
         """
 
-        print("\n📦 New submission received...")
+        logger.info("📦 New submission received...")
         try:
             # Parse message from JSON
             submission_data = json.loads(body)
@@ -73,11 +97,11 @@ def main() -> None:
                 "feedback_comment": "<overall-feedback-comment>"
             }"""
 
-            print("🔍 Fetching repository files...")
+            logger.info("🔍 Fetching repository files from url: %s", github_link)
             repo = GitHubRepository(github_link, GITHUB_TOKEN)
             repo_files = repo.get_files()
 
-            print("🤖 Running AI code review...")
+            logger.info("🤖 Running AI code review...")
             code_reviewer = LLMCodeReviewer(
                 files=repo_files, 
                 rubric=json.dumps(assignment_rubric), 
@@ -85,40 +109,36 @@ def main() -> None:
                 output_template=output_template
             )
             review_result = code_reviewer.get_structured_review()
-            
-            print("🎓 Sending grading results to Moodle...")
+
+            logger.info("🎓 Sending grading results to Moodle...")
             MoodleService.save_grade(assignmentid, userid, review_result)
 
             # Acknowledge message as processed successfully
             channel.basic_ack(delivery_tag = method.delivery_tag)
-            print("✅ Submission processed successfully.\n")
+            logger.info("✅ Submission processed successfully.")
 
-            # Send autograding report to Autograder Dashboard 
             try:
                 StatusReportService.send_report(submission_data, "success", "Autograde completed successfully.")
-                print("📝 Sent status report to Autogrder Dashboard")
+                logger.info("📝 Sent status report to Autograder Dashboard.")
             except Exception as sub_e:
-                print(f"📝 Failed to send status report to Autogrder Dashboard")
+                logger.warning("📝 Failed to send status report to Autograder Dashboard: %s", sub_e)
 
 
         except Exception as e:
-            # Log and report any failures
-            print(f"❌ Error processing submission: {e}")
-            print(f"----- TASK FAILED -----\n")
-            
+            logger.exception("❌ Error processing submission: %s", e)
+
             # Send autograding report to Autograder Dashboard 
             try:
                 StatusReportService.send_report(submission_data, "fail", f"Error autograding submission. {e}")
-                # Acknowledge message
                 channel.basic_ack(delivery_tag = method.delivery_tag)
-                print("📝 Sent status report to Autogarder Dashboard for manual intervention\n")
+                logger.info("📝 Sent failure status report for manual intervention.")
             except Exception as sub_e:
-                print(f"📝 Failed to send status report. {sub_e}\n")
-                print("🔄 Requeuing task...")
+                logger.error("📝 Failed to send failure status report: %s", sub_e)
+                logger.info("🔄 Requeuing task...")
                 channel.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
 
     # Start consuming messages 
-    print("📡 Waiting for new submissions. Press CTRL+C to stop.\n")
+    logger.info("📡 Waiting for new submissions. Press CTRL+C to stop.")
     channel.basic_consume(queue=QUEUE, on_message_callback=callback)
 
     channel.start_consuming()
@@ -128,7 +148,7 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("🛑 Interrupted by user. Shutting down gracefully...")
+        logger.info("🛑 Interrupted by user. Shutting down gracefully...")
         try:
             sys.exit(0)
         except SystemExit:
