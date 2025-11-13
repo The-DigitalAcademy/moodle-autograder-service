@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from moodle_service import MoodleService
 from github_repository import GitHubRepository
 from llm_code_reviewer import LLMCodeReviewer
+from status_report_service import StatusReportService
 
 # Load environment variables from .env file
 load_dotenv()
@@ -44,7 +45,7 @@ def main() -> None:
             body (bytes): The JSON-encoded submission data.
         """
 
-        print("📦 New submission received...")
+        print("\n📦 New submission received...")
         try:
             # Parse message from JSON
             submission_data = json.loads(body)
@@ -91,11 +92,30 @@ def main() -> None:
             # Acknowledge message as processed successfully
             channel.basic_ack(delivery_tag = method.delivery_tag)
             print("✅ Submission processed successfully.\n")
+
+            # Send autograding report to Autograder Dashboard 
+            try:
+                StatusReportService.send_report(submission_data, "success", "Autograde completed successfully.")
+                print("📝 Sent status report to Autogrder Dashboard")
+            except Exception as sub_e:
+                print(f"📝 Failed to send status report to Autogrder Dashboard")
+
+
         except Exception as e:
             # Log and report any failures
             print(f"❌ Error processing submission: {e}")
             print(f"----- TASK FAILED -----\n")
-            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
+            
+            # Send autograding report to Autograder Dashboard 
+            try:
+                StatusReportService.send_report(submission_data, "fail", f"Error autograding submission. {e}")
+                # Acknowledge message
+                channel.basic_ack(delivery_tag = method.delivery_tag)
+                print("📝 Sent status report to Autogarder Dashboard for manual intervention\n")
+            except Exception as sub_e:
+                print(f"📝 Failed to send status report. {sub_e}\n")
+                print("🔄 Requeuing task...")
+                channel.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
 
     # Start consuming messages 
     print("📡 Waiting for new submissions. Press CTRL+C to stop.\n")

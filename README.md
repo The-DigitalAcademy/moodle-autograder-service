@@ -14,6 +14,7 @@ It listens for student submissions from Moodle, retrieves the associated GitHub 
    - Fetches the student's code from GitHub.
    - Uses a Gemini AI model to review and grade the code.
    - Sends structured grading results and feedback back to Moodle.
+   - Send an autograding status report to the databse for the Autograder dahsboard
 
 ## ⚙️ Installation
 
@@ -42,6 +43,10 @@ MOODLE_API_TOKEN=your_moodle_webservice_token
 # Gemini API
 GEMINI_API_KEY=your_gemini_api_key
 GEMINI_MODEL=gemini-2.5-flash
+
+# Supabase API
+SUPABASE_API_URL=https://<supabase-web-address>/rest/v1
+SUPABASE_API_KEY=your_supabase_api_key
 ```
 
 ## 🧠 Usage
@@ -99,11 +104,3 @@ message = {
 channel.basic_publish(exchange='', routing_key='grading_queue', body=json.dumps(message))
 connection.close()
 ```
-
-## 🧩 Future Improvements
-
-- Add retry and dead-letter queue handling for failed submissions.
-- Add structured logging instead of print statements.
-- Implement async message processing for higher throughput.
-- Support private GitHub repos via deploy keys.
-- Add unit tests and CI integration.
