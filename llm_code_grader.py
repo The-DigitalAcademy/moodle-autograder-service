@@ -13,7 +13,7 @@ MODEL = os.getenv('GEMINI_MODEL', 'gemini-2.5-flash')
 genai.configure(api_key=API_KEY)
 
 
-class LLMCodeReviewer:
+class LLMCodeGrader:
     """
     Automatically evaluates and reviews student code submissions using
     a Large Language Model (Gemini). The class builds a structured prompt
@@ -23,7 +23,7 @@ class LLMCodeReviewer:
     def __init__(self, files: list[dict], rubric: str, activity_instruction: str, output_template: str):
 
         """
-        Initialize the LLMCodeReviewer.
+        Initialize the LLMCodeGrader.
 
         Args:
             files (list[dict]): List of code files, each with structure:

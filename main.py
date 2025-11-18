@@ -2,7 +2,7 @@ import os, sys, json, pika, bleach, logging
 from dotenv import load_dotenv
 from moodle_service import MoodleService
 from github_repository import GitHubRepository
-from llm_code_reviewer import LLMCodeReviewer
+from llm_code_grader import LLMCodeGrader
 from status_report_service import StatusReportService
 
 # Load environment variables from .env file
@@ -109,13 +109,13 @@ def main() -> None:
             repo_files = repo.get_files()
 
             logger.info("🤖 Running AI code review...")
-            code_reviewer = LLMCodeReviewer(
+            code_grader = LLMCodeGrader(
                 files=repo_files, 
                 rubric=json.dumps(assignment_rubric), 
                 activity_instruction=activity_instruction, 
                 output_template=output_template
             )
-            review_result = code_reviewer.get_structured_review()
+            review_result = code_grader.get_structured_review()
 
             logger.info("🎓 Sending grading results to Moodle...")
             MoodleService.save_grade(assignmentid, userid, review_result)
