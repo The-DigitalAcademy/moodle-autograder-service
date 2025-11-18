@@ -10,6 +10,9 @@ load_dotenv()
 
 # Message queue and GitHub configuration
 MQ_HOST = os.getenv("MQ_HOST")
+MQ_PORT = os.getenv("MQ_PORT")
+MQ_USERNAME = os.getenv("MQ_USERNAME")
+MQ_PASS = os.getenv("MQ_PASS")
 QUEUE = os.getenv("QUEUE")
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 
@@ -48,7 +51,11 @@ def main() -> None:
     """
     try:
         # Connect to RabbitMQ
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host=MQ_HOST))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(
+            host=MQ_HOST,
+            port=MQ_PORT,
+            credentials=pika.PlainCredentials(MQ_USERNAME, MQ_PASS)
+        ))
         channel = connection.channel()
 
         # Ensure the target queue exists
