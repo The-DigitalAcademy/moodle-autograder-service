@@ -26,7 +26,7 @@ logging.basicConfig(
     level=LOG_LEVEL,
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
-        logging.FileHandler(LOG_FILE),
+        logging.FileHandler(f"/tmp/{LOG_FILE}"),
         logging.StreamHandler(sys.stdout)
     ]
 )
@@ -82,13 +82,13 @@ def main() -> None:
             submission_data = json.loads(body)
 
             # Extract relevant fields
-            assignmentid = submission_data['assignmentid']
-            userid = submission_data['userid']
-            assignment_rubric = submission_data["assignmentrubric"]['criteria']
+            assignmentid = submission_data.get('assignmentid')
+            userid = submission_data.get('userid')
+            assignment_rubric = submission_data['assignmentrubric']['criteria']
 
             # Clean potentially unsafe HTML input from Moodle
-            github_link = bleach.clean(submission_data["onlinetext"], strip=True)
-            activity_instruction = bleach.clean(submission_data["assignmentactivity"], strip=True)
+            github_link = bleach.clean(submission_data.get('onlinetext'), strip=True)
+            activity_instruction = bleach.clean(submission_data.get('assignmentactivity'), strip=True)
 
             # Define expected LLM response format
             output_template = """{

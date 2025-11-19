@@ -69,19 +69,19 @@ class GitHubRepository:
 
             For each file, fetch content (Base64 encoded) from GitHub API
             """
-            file_resp = self.session.get(content_item["url"])
+            file_resp = self.session.get(content_item.get('url'))
             if file_resp.status_code != 200:
-                raise Exception(f"Failed to fetch content for {content_item['path']}: {file_resp.status_code}")
+                raise Exception(f"Failed to fetch content for {content_item.get('path')}: {file_resp.status_code}")
         
             data = file_resp.json()
             if data.get("encoding") == "base64":
-                decoded_content = base64.b64decode(data["content"]).decode("utf-8", errors="ignore")
+                decoded_content = base64.b64decode(data.get('content')).decode("utf-8", errors="ignore")
             else:
                 decoded_content = data.get("content", "")
             
             files.append({
-                "name": content_item["name"],
-                "path": content_item["path"],
+                "name": content_item.get('name'),
+                "path": content_item.get('path'),
                 "content": decoded_content
             })
 
@@ -119,10 +119,10 @@ class GitHubRepository:
 
         # Iterate over all items (files or directories)
         for content in contents:
-            if content["type"] == "file":
+            if content.get('type') == 'file':
                 handle_content_item(content)
-            elif content["type"] == "dir":
-                self._process_content_items(handle_content_item, content["path"],)
+            elif content.get('type') == 'dir':
+                self._process_content_items(handle_content_item, content.get('path'),)
 
 
     def get_repo_details(self):

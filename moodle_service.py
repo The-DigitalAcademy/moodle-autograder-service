@@ -71,7 +71,7 @@ class MoodleService:
         }
 
          # Populate rubric (advanced grading) data
-        for i, criterion in enumerate(grade_results['criteria_results'] or []):
+        for i, criterion in enumerate(grade_results.get('criteria_results') or []):
             params[f'advancedgradingdata[rubric][criteria][{i}][criterionid]'] = criterion.get('criterionid')
             params[f'advancedgradingdata[rubric][criteria][{i}][fillings][{i}][criterionid]'] = criterion.get('criterionid')
             params[f'advancedgradingdata[rubric][criteria][{i}][fillings][{i}][levelid]'] = criterion.get('levelid')

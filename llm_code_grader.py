@@ -82,7 +82,7 @@ class LLMCodeGrader:
         """
         file_contents_in_text = ''
         for file in self.files:
-            file_contents_in_text += f"\n\n{file["path"]}\n```\n{file["content"]}\n```\n"
+            file_contents_in_text += f"\n\n{file.get('path')}\n```\n{file.get('content')}\n```\n"
 
         return file_contents_in_text
     
