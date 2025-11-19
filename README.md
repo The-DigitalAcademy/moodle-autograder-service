@@ -31,6 +31,9 @@ Create a `.env` file in the root directory:
 ```
 # RabbitMQ
 MQ_HOST=localhost
+MQ_PORT=5672
+MQ_USERNAME=guest
+MQ_PASS=guest
 QUEUE=grading_queue
 
 # GitHub
@@ -55,6 +58,20 @@ Start the Service
 
 ```
 python main.py
+```
+
+### 🐳 Use Docker
+
+Build the docker image
+
+```
+docker build -t python-autograder:latest .
+```
+
+Run the docker container
+
+```
+docker run --env-file .env python-autograder:latest
 ```
 
 The service will:
