@@ -7,6 +7,7 @@ load_dotenv()
 # Load Moodle API credentials from environment variables.
 MOODLE_API_URL = os.getenv('MOODLE_API_URL')
 MOODLE_API_TOKEN = os.getenv('MOODLE_API_TOKEN')
+ENV = os.getenv('ENV', 'development')
 
 class MoodleService:
     """
@@ -78,7 +79,8 @@ class MoodleService:
             params[f'advancedgradingdata[rubric][criteria][{i}][fillings][{i}][remark]'] = criterion.get('remark')
         
         # Perform the API request
-        response = requests.post(MOODLE_API_URL, params=params)
+        verifySSL = False if ENV == 'development' else True
+        response = requests.post(MOODLE_API_URL, params=params, verify=verifySSL)
         if not response.ok:
             # Log error or raise exception if Moodle returns a failure
             raise requests.HTTPError(f"Moodle API request failed: {response.status_code} - {response.text}")
