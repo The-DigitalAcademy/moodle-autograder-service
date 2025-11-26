@@ -52,6 +52,8 @@ class MoodleService:
 
         """
 
+        if not isinstance(grade_results, dict):
+            raise ValueError(f"Invalid grade_results. Expected a dictionary, but got: '{grade_results}'")
         if not MOODLE_API_URL or not MOODLE_API_TOKEN:
             raise ValueError("Missing Moodle API credentials (MOODLE_API_URL or MOODLE_API_TOKEN).")
         
