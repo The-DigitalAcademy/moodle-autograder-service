@@ -36,6 +36,7 @@ class StatusReportService:
                 "userid": 45,
                 "status": "submitted",
                 "courseid": 10,
+                "cmid": 43,
                 "assignmentid": 55,
                 "assignmentname": "Basic Programming",
                 "assignmentintro": "Intro assignment for Python basics",
@@ -56,7 +57,8 @@ class StatusReportService:
         
         required_keys = [
             "submissionid", "userid", "status", "courseid",
-            "assignmentid", "assignmentname", "timecreated"
+            "assignmentid", "assignmentname", "timecreated",
+            "cmid"
         ]
 
         missing_keys = [key for key in required_keys if key not in submission]
@@ -85,6 +87,7 @@ class StatusReportService:
             "user_id": submission.get("userid"),
             "submission_status": submission.get("status"),
             "course_id": submission.get("courseid"),
+            "cmid": submission.get("cmid"),
             "assignment_id": submission.get("assignmentid"),
             "assignment_name": submission.get("assignmentname"),
             "assignment_intro": submission.get("assignmentintro"),

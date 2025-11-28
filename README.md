@@ -98,6 +98,7 @@ message = {
 	"userid": "2",
 	"status": "submitted",
 	"courseid": "2",
+    "cmid": "23",
 	"assignmentid": "1",
 	"assignmentname": "Assignment 1",
 	"assignmentintro": "Create a python function",
