@@ -1,0 +1,46 @@
+# ---------------------------
+# Environment / Secrets
+# ---------------------------
+.env
+*.env
+.env.*
+.env.local
+.env.development
+.env.production
+.env.test
+
+venv/
+
+# ---------------------------
+# Git
+# ---------------------------
+.git
+.gitignore
+
+
+# ---------------------------
+# Logs and Debug
+# ---------------------------
+*.log
+logs/
+debug.log
+
+# ---------------------------
+# Build artifacts
+# ---------------------------
+dist/
+build/
+site/
+*.egg-info/
+__pycache__/
+pip-wheel-metadata/
+*.dist-info/
+
+# ---------------------------
+# Project output / data
+# ---------------------------
+output/
+data/
+uploads/
+tmp/
+cache/
